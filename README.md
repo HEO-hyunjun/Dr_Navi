@@ -56,7 +56,11 @@
 
 - **데이터 분포**:
   - 특정 증상을 포함하는 병의 개수
+  ![Figure_1](https://github.com/user-attachments/assets/84a71157-c84b-4f73-9240-a2585277d376)
+
   - 특정 과에 포함되는 병의 개수
+  ![Figure_2](https://github.com/user-attachments/assets/89772f32-1918-443d-8402-577029e17ed6)
+
 
 ---
 
@@ -96,7 +100,8 @@
      - Context Recall: 0.6667
      - Faithfulness: 0.8333
      - Answer Relevancy: 0.7112
-     - 이미지지
+   ![output](https://github.com/user-attachments/assets/206fb8d2-7c8d-4657-8841-eec9ede1bdcb)
+
    - 정성 평가:
      - 정확성, 관련성, 명확성 모두 우수한 평가
 
