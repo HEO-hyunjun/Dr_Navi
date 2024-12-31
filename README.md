@@ -11,6 +11,12 @@
 
 ---
 
+![실행화면](https://github.com/user-attachments/assets/d866d614-df59-4607-a34d-5cf303b92131)
+
+[**Demo 사용해보기**](https://drnavi.streamlit.app/)
+
+---
+
 #### **서비스명 및 개요**
 
 - **서비스명**: 맞춤진료소 추천 서비스
@@ -56,10 +62,10 @@
 
 - **데이터 분포**:
   - 특정 증상을 포함하는 병의 개수
-  ![Figure_1](https://github.com/user-attachments/assets/84a71157-c84b-4f73-9240-a2585277d376)
+ <img src="https://github.com/user-attachments/assets/84a71157-c84b-4f73-9240-a2585277d376" width="600" height="400"/>
 
   - 특정 과에 포함되는 병의 개수
-  ![Figure_2](https://github.com/user-attachments/assets/89772f32-1918-443d-8402-577029e17ed6)
+  <img src="https://github.com/user-attachments/assets/89772f32-1918-443d-8402-577029e17ed6" width="600" height="400"/>
 
 
 ---
@@ -100,7 +106,7 @@
      - Context Recall: 0.6667
      - Faithfulness: 0.8333
      - Answer Relevancy: 0.7112
-   ![output](https://github.com/user-attachments/assets/206fb8d2-7c8d-4657-8841-eec9ede1bdcb)
+     <img src="https://github.com/user-attachments/assets/206fb8d2-7c8d-4657-8841-eec9ede1bdcb" width="600" height="400"/>
 
    - 정성 평가:
      - 정확성, 관련성, 명확성 모두 우수한 평가
