@@ -9,7 +9,16 @@
   - 최유정 : RAG파이프라인 설계, 데이터 크롤링
   - 허현준 : streamlit 프론트와 이에맞춰 rag_system 파일 수정
 
+## 목차
+1. [프로젝트 개요](#1-프로젝트-개요)
+2. [사용 방법](#2-사용-방법)
+3. [배포 링크](#3-배포-링크)
+4. [로컬 실행 방법](#4-로컬-실행-방법)
+
+
 ---
+
+### 1. 프로젝트 개요
 
 ![실행화면](https://github.com/user-attachments/assets/d866d614-df59-4607-a34d-5cf303b92131)
 
@@ -52,6 +61,17 @@
 
 ---
 
+#### **시스템 구성**
+
+**Tech Stack**
+<img src="https://github.com/user-attachments/assets/c03915c3-06b8-4a85-8373-d89c162d528a" width="700" />
+
+**Architecture**
+<img src="https://github.com/user-attachments/assets/60b221df-ab06-4991-9742-584f451fbbe4" width="700"/>
+
+
+---
+
 #### **데이터 구성 및 활용**
 
 - **원천 데이터**: [서울아산병원 건강정보 웹페이지](https://www.amc.seoul.kr/asan/healthinfo/symptom/symptomSubmain.do)
@@ -89,7 +109,7 @@
 
 4. **LLM 프롬프트 설계**:
    - 모델: ChatOpenAI (gpt-4o-mini)
-   - 온도(Temperature): 0.7
+   - Temperature: 0.7
 
 ---
 
@@ -126,4 +146,64 @@
   - 의료 데이터 추가 및 추천 알고리즘 고도화
   - 사용자 경험 개선 및 파트너십 확장
 
+---
+
+
+### 2. 사용 방법
+
+  1. **사용자의 증상에 대해 작성 후 전송 (옵션. 더 정확한 결과를 원한다면 `사용자 정보 입력`에 데이터를 입력)** 
+  <img src="https://github.com/user-attachments/assets/f6d818d5-49e3-41e1-a702-5a436fbd5245"  width="700"/>
+
+
+  2. **답변의 **`추천 진료과`** 항목 확인**
+
+  <img src="https://github.com/user-attachments/assets/edc8f6c0-5c7f-4d09-bdd5-925384a396e6"  width="700"/>
+
+
+---
+
+### 3. 배포 링크
+
+아래의 **`사용해 보기`** 클릭 하거나 주소창에 **`https://drnavi.streamlit.app/`** 입력
+#### [사용해 보기 (클릭)](https://drnavi.streamlit.app/)
+
+---
+
+### 4. 로컬 실행 방법
+
+#### 요구사항
+실행을 위해 필요한 최소 요구사항
+  - 파이썬 3.10 이상
+  - Git 설치
+  - 윈도우 10이상 
+  
+  (윈도우 환경에서 테스트가 진행되었기에 이외의 환경에 대해선 실해이 원할하지 않을 수 있습니다.)
+
+#### 1. 깃 클론 및 프로젝트 폴더로 이동
+```bash
+git clone "https://github.com/HEO-hyunjun/Dr_Navi"
+
+cd Dr_Navi
+```
+
+#### 2. 파이썬 가상 환경 생성 후 가상 환경 실행
+```bash
+python -m venv "env"
+
+.\env\Scripts\Activate.ps1 (powershell)
+
+.\env\Scripts\activate.bat (cmd.exe)
+```
+
+#### 3. 라이브러리 설치
+```bash
+pip install -r requirements.txt
+```
+
+#### 4. 프로그램 실행
+```bash
+streamlit run Home.py
+```
+
+#### 5. 목차의 [2. 사용 방법](#2-사용-방법)과 사용 방법 동일
 ---
