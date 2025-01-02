@@ -64,9 +64,11 @@
 #### **시스템 구성**
 
 **Tech Stack**
+
 <img src="https://github.com/user-attachments/assets/c03915c3-06b8-4a85-8373-d89c162d528a" width="700" />
 
 **Architecture**
+
 <img src="https://github.com/user-attachments/assets/60b221df-ab06-4991-9742-584f451fbbe4" width="700"/>
 
 
@@ -200,10 +202,13 @@ python -m venv "env"
 pip install -r requirements.txt
 ```
 
-#### 4. 프로그램 실행
+#### 4. `.env_example` 파일 내용을 참고하여 `.env` 생성 후 저장
+
+
+#### 5. 프로그램 실행
 ```bash
 streamlit run Home.py
 ```
 
-#### 5. 목차의 [2. 사용 방법](#2-사용-방법)과 사용 방법 동일
+#### 6. 목차의 [2. 사용 방법](#2-사용-방법)과 사용 방법 동일
 ---
