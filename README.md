@@ -119,16 +119,17 @@
 
 1. **평가방법**:
 
-   - 정량 평가: Context Precision, Recall, Faithfulness, Answer Relevancy
+   - 정량 평가: BERT_F1, Faithfulness, Context Recall, Context Precision
    - 정성 평가: 정확성, 관련성, 명확성
 
 2. **평가 결과**:
    - 정량 평가:
-     - Context Precision: 0.5833
-     - Context Recall: 0.6667
-     - Faithfulness: 0.8333
-     - Answer Relevancy: 0.7112
-     <img src="https://github.com/user-attachments/assets/206fb8d2-7c8d-4657-8841-eec9ede1bdcb" width="600" height="400"/>
+     - BERT_F1: 0.925017243
+     - Faithfulness: 0.4790
+     - Context Precision: 0.9653
+     - Context Recall: 0.5213
+     
+     <img src="https://github.com/user-attachments/assets/9d341daf-0a28-465b-b791-93ff6b3053d6" width="600" height="400"/>
 
    - 정성 평가:
      - 정확성, 관련성, 명확성 모두 우수한 평가
