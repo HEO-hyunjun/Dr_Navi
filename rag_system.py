@@ -10,6 +10,8 @@ import os
 load_dotenv()
 
 # RAG 시스템 생성
+
+
 def create_medical_rag_system(vectorstore):
     # OpenAI 언어 모델 초기화
     llm = ChatOpenAI(
@@ -26,7 +28,7 @@ def create_medical_rag_system(vectorstore):
 
     # dense retriever 생성
     retriever = vectorstore.as_retriever(
-        # 유사도 정의 
+        # 유사도 정의
         search_type="mmr",   # Maximum Marginal Relevance 검색 방식 사용
         # 검색할 쿼리 수 정의
         search_kwargs={"k": 3})
@@ -38,14 +40,18 @@ def create_medical_rag_system(vectorstore):
     llm에 생성된 문서를 전달하고 답변을 생성
     """
     retriever_chain = create_retrieval_chain(retriever, document_chain)
-    
+
     return retriever_chain
 
 # Context 문서 포매팅 함수
+
+
 def format_docs(docs):
-  return "\n\n".join(document.page_content for document in docs) 
+    return "\n\n".join(document.page_content for document in docs)
 
 # 프롬프트 템플릿 정의
+
+
 def get_medical_prompt():
     return ChatPromptTemplate.from_messages([
         # system prompt
@@ -73,10 +79,10 @@ def get_medical_prompt():
         - 전문 의학 용어는 사용자가 이해하기 쉽게 전문용어를 풀어서 설명해줘.
         - 검색된 문서에서 정보를 바탕으로 응답해줘.
     """),
-    
-    # few-shot prompting
-    ("human", "기침과 열이나고, 목이 간지럽고 아파."),
-    ("ai", """[증상 분석]
+
+        # few-shot prompting
+        ("human", "기침과 열이나고, 목이 간지럽고 아파."),
+        ("ai", """[증상 분석]
     목의 불편감(간지러움 및 통증)과 함께 열이 동반된 상황입니다. 이는 상기도 감염(감기, 인후염 등)이나 목 관련 염증(편도염)일 가능성이 높습니다.
 
     [추천 진료과]
@@ -87,8 +93,8 @@ def get_medical_prompt():
     - 본 정보는 참고용이며, 정확한 진단을 위해서는 반드시 의사의 진료가 필요합니다.
     - 고열(38도 이상)이 지속되거나 호흡 곤란이 있을 경우 응급실을 방문하세요."""),
 
-    ("human", "피부에 붉은 반점과 가려움이 있고, 발열이 있어."),
-    ("ai", """[증상분석]
+        ("human", "피부에 붉은 반점과 가려움이 있고, 발열이 있어."),
+        ("ai", """[증상분석]
      붉은 반점과 가려움증은 피부염이나 알레르기 반응일 가능성이 있습니다. 발열이 동반된 경우, 감염성 질환(피부 봉와직염)이나 전신적인 알레르기 반응도 의심할 수 있습니다.
 
     [추천 진료과]
@@ -99,29 +105,24 @@ def get_medical_prompt():
     - 발열이 심하거나 증상이 급격히 악화되면 즉시 응급실로 이동하세요.
     - 알레르기 약 복용 후에도 증상이 개선되지 않으면 전문 진료를 권장합니다."""),
 
-    # User query
-    ("human", "{input}")
+        # User query
+        ("human", "{input}")
     ])
 
 # retriever 생성 함수
-def get_retriever(llm,vectorstore):
-    # 챗봇 프롬프트 템플릿 정의
-    prompt = get_medical_prompt()
-    
+
+
+def get_retriever(vectorstore):
     # dense retriever 생성
     retriever = vectorstore.as_retriever(
-        # 유사도 정의 
+        # 유사도 정의
         search_type="mmr",   # Maximum Marginal Relevance 검색 방식 사용
         # 검색할 쿼리 수 정의
         search_kwargs={"k": 3})
     return retriever
 
 # medical_chain 생성 함수
-def get_medical_chain(llm,vectorstore):
-    retriever = get_retriever(llm,vectorstore)
-    return {
-        "context": retriever | RunnableLambda(format_docs),
-        "input": RunnablePassthrough(),
-        "sex": RunnablePassthrough(),
-        "age": RunnablePassthrough()
-    } | get_medical_prompt() | llm
+
+
+def get_medical_chain(llm):
+    return get_medical_prompt() | llm
