@@ -1,6 +1,6 @@
 from langchain.schema import BaseOutputParser
-from crawl_data import get_vectorstore
-from rag_system import create_medical_rag_system
+from src.crawl_data import get_vectorstore
+from src.rag_system import create_medical_rag_system
 from langchain_openai import ChatOpenAI
 from datasets import Dataset
 import pandas as pd
@@ -74,17 +74,26 @@ def test():
     rag_results = Dataset.from_pandas(df)
 
     from ragas.metrics import (
-        answer_relevancy,
+        # answer_relevancy,
         faithfulness,
         context_recall,
         context_precision,
     )
     df.to_csv("test.csv")
 
+    ## 있는 파일 확인하고 싶을때,
+    # import ast
+    # df = pd.read_csv("result/test.csv")
+    # if 'contexts' in df.columns:
+    #     df['contexts'] = df['contexts'].apply(
+    #         lambda x: ast.literal_eval(x) if isinstance(x, str) and x.startswith("[") and x.endswith("]") else x
+    #     )
+    # rag_results = Dataset.from_pandas(df)
+
     result = evaluate(
         rag_results,
         metrics=[
-            answer_relevancy, # 답의 context와의 관련성
+            # answer_relevancy, # 답의 질문과의 관련성
             faithfulness, # 질문이 context로 부터 추출한 정보의 수
             context_recall, # context로 유추할 수 있는 답변 비율
             context_precision, # 질문에 관련있는 문서 잘 불러오는가.
