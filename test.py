@@ -4,101 +4,19 @@ from rag_system import create_medical_rag_system
 from langchain_openai import ChatOpenAI
 from datasets import Dataset
 import pandas as pd
+import json
 import re
-
 from ragas import evaluate
 
-def parse(text):
-        # 1. [추천 진료과] 항목을 찾는다
-        match = re.search(r'\[추천 진료과\](.*?)\[', text, re.DOTALL)
-        if match:
-            recommendations_section = match.group(1)
-        else:
-            return []
 
-        # 2. ~과 로 끝나는 단어를 리스트로 반환한다
-        recommendations = re.findall(r'\b\S+과\b', recommendations_section)
-        return ", ".join(recommendations)
-
-
-test_cases = [
-    {
-        "symptoms": "기침, 가래, 호흡곤란",
-        "sex": "남성", 
-        "age": 45,
-        "ground_truth": "호흡기내과, 내과"
-    },
-    {
-        "symptoms": "기침, 가래, 열, 빈호흡",
-        "sex": "여성", 
-        "age": 35,
-        "ground_truth": "감염내과"
-    },
-    {
-        "symptoms": "어깨통증, 손 저림, 두통, 팔 저림",
-        "sex": "남성", 
-        "age": 45,
-        "ground_truth": "신경외과, 정형외과"
-    },
-    {
-        "symptoms": "복부통증, 골반 통증",
-        "sex": "여성", 
-        "age": 30,
-        "ground_truth": "산부인과"
-    },
-        {
-        "symptoms": "유방멍울",
-        "sex": "남성", 
-        "age": 40,
-        "ground_truth": "유방외과"
-    },
-        {
-        "symptoms": "시야장애, 발작, 팔다리 마비",
-        "sex": "남성", 
-        "age": 5,
-        "ground_truth": "신경과, 소아신경과, 신경외과"
-    },
-        {
-        "symptoms": "배뇨곤란, 잔뇨감, 빈뇨",
-        "sex": "남성", 
-        "age": 70,
-        "ground_truth": "비뇨의학과"
-    },
-        {
-        "symptoms": "시야흐림, 복시, 눈부심",
-        "sex": "여성", 
-        "age": 70,
-        "ground_truth": "안과"
-    },
-        {
-        "symptoms": "어깨통증, 어깨운동 제한, 어깨 마찰음",
-        "sex": "남성", 
-        "age": 60,
-        "ground_truth": "정형외과"
-    },
-        {
-        "symptoms": "얼굴 홍반, 관절 통증, 피로감",
-        "sex": "여성", 
-        "age": 50,
-        "ground_truth": "류마티스내과, 피부과"
-    },
-        {
-        "symptoms": "다식, 다음, 다뇨, 체중감소소",
-        "sex": "남성", 
-        "age": 60,
-        "ground_truth": "내분비내과"
-    },
-        {
-        "symptoms": "귀 통증, 귀 분비물, 열",
-        "sex": "여성", 
-        "age": 10,
-        "ground_truth": "이비인후과"
-    },
-]
-
-
+file_path = "test_data.json"
+test_json = json.load(open(file_path, encoding="UTF-8"))
 contexts_list = []
 answers_list = []
+
+def make_ground_json(symptom_analyze,recomendation1,recomendation2):
+    text = f"[증상 분석] \n{symptom_analyze}\n\n[추천 진료과]\n1.{recomendation1}\n\n2.{recomendation2}\n\n[주의사항]\n- 이는 참고용 정보이며, 정확한 진단은 의사의 진찰이 필요합니다.\n- 만약 증상이 심해지거나 지속된다면 즉시 병원을 방문하는 것을 권장합니다."
+    return text
 
 def test():
     vectorstore = get_vectorstore()
@@ -114,27 +32,34 @@ def test():
     ground_truth_list = []
 
 
-    for case in test_cases:
+    for case in test_json:
         response = medical_chain.invoke({
-            "input": case["symptoms"],
-            "sex": case["sex"], 
-            "age": case["age"]
+            "input": case["증상"],
+            "sex": case["성별"],
+            "age": case["나이"]
              })
 
+        # print(response["answer"])
         docs = response['context']
 
         # Collect page contents as a list
         combined_content = [doc.page_content for doc in docs]
-        print(f"\n성별: {case['sex']}, 나이: {case['age']}, 증상: {case['symptoms']}")
-        print("\n".join(combined_content))  # For debugging
+        # print(f"\n성별: {case['성별']}, 나이: {case['나이']}, 증상: {case['증상']}")
+        # print("\n".join(combined_content))  # For debugging  combinelist 출력
+        # print("-"*50)
 
         contexts_list.append(combined_content)  # Store as list
-        answers_list.append(parse(response["answer"]))
-        sex_list.append(case["sex"])
-        age_list.append(case["age"])
-        symptoms_list.append(case["symptoms"])
-        ground_truth_list.append(case["ground_truth"])
-    
+        answers_list.append(response["answer"])
+        # print(answers_list[-1]) #
+        # print("-"*50)
+        sex_list.append(case["성별"])
+        age_list.append(case["나이"])
+        symptoms_list.append(case["증상"])
+
+        ground_truth=make_ground_json(case["증상 분석"],case["추천 진료과 1"],case["추천 진료과 2"])
+        # print(ground_truth)
+        ground_truth_list.append(ground_truth)
+
     df = pd.DataFrame(
         {
             "question": symptoms_list,
@@ -145,7 +70,7 @@ def test():
             "ground_truth": ground_truth_list,  # Adjust if `ground_truth_list` contains multiple items
         }
     )
-
+    # print("-"*50)
     rag_results = Dataset.from_pandas(df)
 
     from ragas.metrics import (
@@ -154,14 +79,15 @@ def test():
         context_recall,
         context_precision,
     )
+    df.to_csv("test.csv")
 
     result = evaluate(
         rag_results,
         metrics=[
-            answer_relevancy,
-            faithfulness,
-            context_recall,
-            context_precision,
+            answer_relevancy, # 답의 context와의 관련성
+            faithfulness, # 질문이 context로 부터 추출한 정보의 수
+            context_recall, # context로 유추할 수 있는 답변 비율
+            context_precision, # 질문에 관련있는 문서 잘 불러오는가.
         ],
     )
 
