@@ -20,7 +20,7 @@
 
 ### 1. 프로젝트 개요
 
-![실행화면](https://github.com/user-attachments/assets/d866d614-df59-4607-a34d-5cf303b92131)
+![실행화면](https://github.com/user-attachments/assets/dd013127-935f-4f72-98d6-5cc38d02acf7)
 
 [**Demo 사용해보기**](https://drnavi.streamlit.app/)
 
