@@ -1,6 +1,6 @@
 # (venv)환경에서 streamlit run Home.py 명령어 실행
-from crawl_data import get_vectorstore
-from rag_system import get_medical_chain, get_retriever, format_docs
+from src.crawl_data import get_vectorstore
+from src.rag_system import get_medical_chain, get_retriever, format_docs
 from langchain_community.chat_models import ChatOpenAI
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain.callbacks import StdOutCallbackHandler
