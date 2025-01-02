@@ -20,35 +20,82 @@ def parse(text):
         recommendations = re.findall(r'\b\S+과\b', recommendations_section)
         return ", ".join(recommendations)
 
-question_list = [
-    "기침, 가래, 호흡곤란",
-    "기침, 가래, 열, 빈호흡",
-    "심부전, 호흡곤란",
-    "빈뇨, 야간뇨, 방광 팽만",
-    "환부통증",
-    "청력장애, 이명",
-    "발적, 청력장애, 고막에 수포형성",
-    "어깨통증, 눈의 출혈",
-    "환부의 분비물, 눈의 통증",
-    "권태감, 근력 약화",
-    "요통, 골반통",
-    "환부 통증, 덩어리가 만져짐"
+
+test_cases = [
+    {
+        "symptoms": "기침, 가래, 호흡곤란",
+        "sex": "남성", 
+        "age": 45,
+        "ground_truth": "호흡기내과, 내과"
+    },
+    {
+        "symptoms": "기침, 가래, 열, 빈호흡",
+        "sex": "여성", 
+        "age": 35,
+        "ground_truth": "감염내과"
+    },
+    {
+        "symptoms": "어깨통증, 손 저림, 두통, 팔 저림",
+        "sex": "남성", 
+        "age": 45,
+        "ground_truth": "신경외과, 정형외과"
+    },
+    {
+        "symptoms": "복부통증, 골반 통증",
+        "sex": "여성", 
+        "age": 30,
+        "ground_truth": "산부인과"
+    },
+        {
+        "symptoms": "유방멍울",
+        "sex": "남성", 
+        "age": 40,
+        "ground_truth": "유방외과"
+    },
+        {
+        "symptoms": "시야장애, 발작, 팔다리 마비",
+        "sex": "남성", 
+        "age": 5,
+        "ground_truth": "신경과, 소아신경과, 신경외과"
+    },
+        {
+        "symptoms": "배뇨곤란, 잔뇨감, 빈뇨",
+        "sex": "남성", 
+        "age": 70,
+        "ground_truth": "비뇨의학과"
+    },
+        {
+        "symptoms": "시야흐림, 복시, 눈부심",
+        "sex": "여성", 
+        "age": 70,
+        "ground_truth": "안과"
+    },
+        {
+        "symptoms": "어깨통증, 어깨운동 제한, 어깨 마찰음",
+        "sex": "남성", 
+        "age": 60,
+        "ground_truth": "정형외과"
+    },
+        {
+        "symptoms": "얼굴 홍반, 관절 통증, 피로감",
+        "sex": "여성", 
+        "age": 50,
+        "ground_truth": "류마티스내과, 피부과"
+    },
+        {
+        "symptoms": "다식, 다음, 다뇨, 체중감소소",
+        "sex": "남성", 
+        "age": 60,
+        "ground_truth": "내분비내과"
+    },
+        {
+        "symptoms": "귀 통증, 귀 분비물, 열",
+        "sex": "여성", 
+        "age": 10,
+        "ground_truth": "이비인후과"
+    },
 ]
 
-ground_truth_list = [
-    "호흡기내과, 내과",
-    "감염내과",
-    "호흡기내과",
-    "비뇨의학과",
-    "정형외과",
-    "이비인후과",
-    "이비인후과",
-    "정형외과",
-    "안과",
-    "신경과",
-    "재활의학과, 류마타내스내과",
-    "성형외과, 정형외과"
-]
 
 contexts_list = []
 answers_list = []
@@ -61,22 +108,38 @@ def test():
 
     contexts_list = []  # Initialize lists
     answers_list = []
+    sex_list = []
+    age_list = []
+    symptoms_list = []
+    ground_truth_list = []
 
-    for question in question_list:
-        response = medical_chain.invoke({"input": question})
+
+    for case in test_cases:
+        response = medical_chain.invoke({
+            "input": case["symptoms"],
+            "sex": case["sex"], 
+            "age": case["age"]
+             })
 
         docs = response['context']
 
         # Collect page contents as a list
         combined_content = [doc.page_content for doc in docs]
+        print(f"\n성별: {case['sex']}, 나이: {case['age']}, 증상: {case['symptoms']}")
         print("\n".join(combined_content))  # For debugging
 
         contexts_list.append(combined_content)  # Store as list
         answers_list.append(parse(response["answer"]))
+        sex_list.append(case["sex"])
+        age_list.append(case["age"])
+        symptoms_list.append(case["symptoms"])
+        ground_truth_list.append(case["ground_truth"])
     
     df = pd.DataFrame(
         {
-            "question": question_list,
+            "question": symptoms_list,
+            "sex": sex_list,
+            "age": age_list,
             "contexts": contexts_list,  # Ensure it's a list
             "answer": answers_list,
             "ground_truth": ground_truth_list,  # Adjust if `ground_truth_list` contains multiple items

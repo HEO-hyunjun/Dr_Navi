@@ -5,12 +5,13 @@ from pinecone import Pinecone, ServerlessSpec
 from langchain_core.documents import Document
 from langchain_upstage import UpstageEmbeddings
 from dotenv import load_dotenv
-import requests, os
+import requests, os, json
 
 load_dotenv()
 
 def crawl_disease_symptom():
     documents = []
+    seen_diseases = set()  # 중복제거
     
     url = "https://www.amc.seoul.kr/asan/healthinfo/disease/diseaseList.do?diseaseKindId=C00000{}".format(20)
     response = requests.get(url)  # GET 메소드로 url에 HTTP Requset 전송
@@ -38,21 +39,27 @@ def crawl_disease_symptom():
         
             for disease_element in disease_elements:
                 disease_name = disease_element.find('strong').get_text(strip=True)  # 질병명
+            
+                # 중복제거
+                if disease_name in seen_diseases:
+                    continue
+                seen_diseases.add(disease_name)
 
-                # 증상 추출
-                symptoms = []
-                departments = []
-                for link in disease_element.select('dd a'):  # 세부정보
+                # 증상 추출 (중복제거)
+                symptoms = set()
+                departments = set()
+                links = disease_element.select('dd a')
+                for link in links:  # 세부정보
                     # symptomId가 있는 링크만 추출
                     if 'symptomId' in link['href']:  
-                        symptoms.append(link.get_text(strip=True))
+                        symptoms.add(link.get_text(strip=True))
                     # dept가 있는 링크
                     elif 'dept' in link['href']:
-                        departments.append(link.get_text(strip=True))
+                        departments.add(link.get_text(strip=True))
 
-                # 중복된 키의 경우 리스트에 추가
+                # 증상과 진료과가 모두 있는 경우만 저장
                 # 질병-증상 데이터를 RAG용 문서(Document 객체)로 변환
-                if symptoms:
+                if symptoms and departments:
                     documents.append(Document(
                         page_content=f"""질병명: {disease_name}
                         주요증상: {', '.join(symptoms)}
@@ -66,7 +73,8 @@ def crawl_disease_symptom():
     # print(documents)
     return documents
 
-# Chroma_db 초기화 및 반환
+
+# Vectorsotre
 def get_vectorstore():
     """
     # Chroma DB 경로 설정
@@ -101,10 +109,14 @@ def get_vectorstore():
     # pinecone 초기화 
     pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 
+    # 인덱스 삭제
+    # if index_name in pc.list_indexes().names():
+    #     pc.delete_index(index_name)
+
     # 임베딩 모델 초기화 
     embeddings = UpstageEmbeddings(
         api_key=os.getenv("UPSTAGE_API_KEY"),
-        model="embedding-passage"
+        model="embedding-query"
     )
 
     # 테스트용 임베딩으로 차원 확인
