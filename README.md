@@ -3,11 +3,11 @@
 이 프로젝트는 SSAFY 12기 2024년 12월 하계 AI 계절학기 프로젝트입니다.
 
 - 팀원
-  - 김민철 : 보고서 작성, 테스트코드 설계 및 작성
+  - 김민철 : 보고서 작성, 테스트 코드 설계 및 작성
   - 임동성 : 보고서 작성
-  - 지용석 : 보고서 작성
-  - 최유정 : RAG파이프라인 설계, 데이터 크롤링
-  - 허현준 : streamlit 프론트와 이에맞춰 rag_system 파일 수정
+  - 지용석 : 보고서 작성, README 작성, 그래프 도출
+  - 최유정 : RAG 파이프라인 설계, 데이터 크롤링, PPT
+  - 허현준 : Streamlit Front-end, RAG 파이프라인 보안, 배포
 
 ## 목차
 1. [프로젝트 개요](#1-프로젝트-개요)
@@ -28,7 +28,7 @@
 
 #### **서비스명 및 개요**
 
-- **서비스명**: 맞춤진료소 추천 서비스
+- **서비스명**: AI기반 진료과 추천 서비스
 - **서비스 개요**:
   - 고객이 증상에 맞는 진료소를 찾는 데 겪는 어려움을 해결하기 위한 챗봇 서비스
   - 병에 따른 증상 정보를 크롤링하고 이를 기반으로 맞춤형 진료소를 추천
@@ -54,10 +54,14 @@
 - **서비스 목표**:
 
   - 증상 기반으로 신속하고 정확한 진료소를 추천하여 진료 준비 시간을 단축
+  - 의료 정보의 접근과 신뢰성을 향상 시킴으로써 의료 서비스의 질적 향상 도모
 
 - **기대효과**:
   - 사용자는 간단한 질의로 신뢰할 수 있는 진료소 정보를 제공받을 수 있음
   - 의료 상담 초기 단계 간소화 및 의료 접근성 개선
+  - 향후 다양한 의료 서비스로의 확장 가능성
+  - 의료자원 활용 최적화
+  - 의료 서비스 질적 향상 및 의료 비용 절감
 
 ---
 
@@ -65,14 +69,36 @@
 
 **Tech Stack**
 
-<img src="https://github.com/user-attachments/assets/c03915c3-06b8-4a85-8373-d89c162d528a" width="700" />
-
-**Architecture**
-
 <img src="https://github.com/user-attachments/assets/60b221df-ab06-4991-9742-584f451fbbe4" width="700"/>
 
 
+**Architecture**
+
+<img src="https://github.com/user-attachments/assets/c03915c3-06b8-4a85-8373-d89c162d528a" width="700" />
+
+
 ---
+
+
+#### **주요 기능**
+
+**증상 기반 진단**
+  - 자연어 증상 입력
+  - GPT-4-mini 기반 분석
+
+**진료과 추천**
+  - RAG 기반 정확도 향상
+  - 진료과 2개 추천
+  - 추천 근거 제공
+
+**맞춤형 응답**
+  - 성별/나이 기반 개인화
+  - 의학용어의 쉬운 설명
+  - 단계별 응답 구조화
+
+
+---
+
 
 #### **데이터 구성 및 활용**
 
@@ -94,22 +120,17 @@
 
 #### **RAG 파이프라인 설계**
 
-1. **데이터 최적화**:
-
-   - Chunk Size: 1500
-   - Overlap: 200
-
-2. **벡터 데이터베이스 구축**:
+1. **벡터 데이터베이스 구축**:
 
    - 벡터 DB: Pinecone
    - 임베딩 모델: Upstage Embeddings
 
-3. **Retriever 및 Reranker 구현**:
+2. **Retriever 및 Reranker 구현**:
 
    - 방식: Dense Retriever (MMR 방식)
    - 검색방식: MMR, 반환할 문서 수(k) = 3
 
-4. **LLM 프롬프트 설계**:
+3. **LLM 프롬프트 설계**:
    - 모델: ChatOpenAI (gpt-4o-mini)
    - Temperature: 0.7
 
@@ -204,7 +225,17 @@ pip install -r requirements.txt
 ```
 
 #### 4. `.env_example` 파일 내용을 참고하여 `.env` 생성 후 저장
+```ini
+PINECONE_API_KEY="PINECONE_API_KEY"
+UPSTAGE_API_KEY="UPSTAGE_API_KEY"
+OPENAI_API_KEY="OPENAI_API_KEY"
 
+##############    optional    ####################
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_ENDPOINT="https://api.smith.langchain.com"
+LANGCHAIN_API_KEY="LANGCHAIN_API_KEY"
+LANGCHAIN_PROJECT="LANGCHAIN_PROJECT"
+```
 
 #### 5. 프로그램 실행
 ```bash
